@@ -79,6 +79,7 @@ Na pasta do projeto, execute:
 
 ```bash
 mvn spring-boot:run
+.\apache-maven-3.9.16\bin\mvn.cmd spring-boot:run
 ```
 
 Depois acesse:
