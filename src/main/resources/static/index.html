@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque de Veiculos</title>
+    <style>
+        :root {
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --line: #d7dde5;
+            --text: #17202a;
+            --muted: #5d6978;
+            --brand: #176b87;
+            --brand-dark: #114f63;
+            --danger: #b42318;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--line);
+            padding: 18px 24px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            width: min(1180px, calc(100% - 32px));
+            margin: 24px auto;
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+        }
+
+        section {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
+        form, .filters {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            display: grid;
+            gap: 5px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        input, select, button {
+            min-height: 38px;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            font: inherit;
+            padding: 8px 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border-color: var(--brand);
+            background: var(--brand);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        button:hover {
+            background: var(--brand-dark);
+        }
+
+        button.secondary {
+            color: var(--brand);
+            background: #ffffff;
+        }
+
+        button.danger {
+            border-color: var(--danger);
+            background: var(--danger);
+        }
+
+        .filters {
+            grid-template-columns: repeat(3, minmax(130px, 1fr));
+            align-items: end;
+            margin-bottom: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--line);
+            padding: 10px 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            min-height: 22px;
+            margin-top: 10px;
+            color: var(--brand-dark);
+            font-weight: 700;
+        }
+
+        @media (max-width: 920px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Estoque de Veiculos</h1>
+</header>
+
+<main>
+    <section>
+        <h2>Cadastro</h2>
+        <form id="vehicle-form">
+            <input type="hidden" id="vehicle-id">
+            <label>
+                Marca
+                <select id="brand" required></select>
+            </label>
+            <label>
+                Modelo
+                <select id="model" required></select>
+            </label>
+            <label>
+                Ano
+                <input id="year" type="number" min="1900" max="2100" required>
+            </label>
+            <label>
+                Cor
+                <input id="color" required>
+            </label>
+            <label>
+                Preco
+                <input id="price" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+                Quilometragem
+                <input id="mileage" type="number" min="0" required>
+            </label>
+            <label>
+                Status
+                <select id="status" required>
+                    <option value="DISPONIVEL">Disponivel</option>
+                    <option value="RESERVADO">Reservado</option>
+                    <option value="VENDIDO">Vendido</option>
+                    <option value="DESCONTINUADO">Descontinuado</option>
+                </select>
+            </label>
+            <button type="submit">Salvar veiculo</button>
+            <button type="button" class="secondary" id="clear-form">Limpar</button>
+            <p class="message" id="message"></p>
+        </form>
+    </section>
+
+    <section>
+        <h2>Consulta e filtros</h2>
+        <div class="filters">
+            <label>
+                Marca
+                <select id="filter-brand">
+                    <option value="">Todas</option>
+                </select>
+            </label>
+            <label>
+                Modelo
+                <select id="filter-model">
+                    <option value="">Todos</option>
+                </select>
+            </label>
+            <label>
+                Ano
+                <input id="filter-year" type="number" min="1900" max="2100">
+            </label>
+            <label>
+                Preco minimo
+                <input id="filter-price-min" type="number" min="0" step="0.01">
+            </label>
+            <label>
+                Preco maximo
+                <input id="filter-price-max" type="number" min="0" step="0.01">
+            </label>
+            <label>
+                Status
+                <select id="filter-status">
+                    <option value="">Todos</option>
+                    <option value="DISPONIVEL">Disponivel</option>
+                    <option value="RESERVADO">Reservado</option>
+                    <option value="VENDIDO">Vendido</option>
+                    <option value="DESCONTINUADO">Descontinuado</option>
+                </select>
+            </label>
+            <button id="apply-filters">Filtrar</button>
+            <button class="secondary" id="clear-filters">Limpar filtros</button>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Cor</th>
+                <th>Preco</th>
+                <th>Km</th>
+                <th>Status</th>
+                <th>Acoes</th>
+            </tr>
+            </thead>
+            <tbody id="vehicle-list"></tbody>
+        </table>
+    </section>
+</main>
+
+<script>
+    const api = "/api";
+    const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+    const elements = {
+        form: document.querySelector("#vehicle-form"),
+        id: document.querySelector("#vehicle-id"),
+        brand: document.querySelector("#brand"),
+        model: document.querySelector("#model"),
+        year: document.querySelector("#year"),
+        color: document.querySelector("#color"),
+        price: document.querySelector("#price"),
+        mileage: document.querySelector("#mileage"),
+        status: document.querySelector("#status"),
+        filterBrand: document.querySelector("#filter-brand"),
+        filterModel: document.querySelector("#filter-model"),
+        filterYear: document.querySelector("#filter-year"),
+        filterPriceMin: document.querySelector("#filter-price-min"),
+        filterPriceMax: document.querySelector("#filter-price-max"),
+        filterStatus: document.querySelector("#filter-status"),
+        list: document.querySelector("#vehicle-list"),
+        message: document.querySelector("#message")
+    };
+
+    async function request(path, options = {}) {
+        const response = await fetch(`${api}${path}`, {
+            headers: { "Content-Type": "application/json" },
+            ...options
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ erro: "Erro na requisicao." }));
+            throw new Error(error.erro);
+        }
+
+        if (response.status === 204) {
+            return null;
+        }
+
+        return response.json();
+    }
+
+    async function loadBrands() {
+        const brands = await request("/marcas");
+        const options = brands.map(brand => `<option value="${brand.id}">${brand.nome}</option>`).join("");
+        elements.brand.innerHTML = options;
+        elements.filterBrand.innerHTML = `<option value="">Todas</option>${options}`;
+        await loadModels();
+        await loadFilterModels();
+    }
+
+    async function loadModels() {
+        const brandId = elements.brand.value;
+        const models = await request(`/modelos?marcaId=${brandId}`);
+        elements.model.innerHTML = models.map(model => `<option value="${model.id}">${model.nome}</option>`).join("");
+    }
+
+    async function loadFilterModels() {
+        const brandId = elements.filterBrand.value;
+        const path = brandId ? `/modelos?marcaId=${brandId}` : "/modelos";
+        const models = await request(path);
+        elements.filterModel.innerHTML = `<option value="">Todos</option>${
+            models.map(model => `<option value="${model.id}">${model.nome}</option>`).join("")
+        }`;
+    }
+
+    function vehiclePayload() {
+        return {
+            modeloId: Number(elements.model.value),
+            ano: Number(elements.year.value),
+            cor: elements.color.value,
+            preco: Number(elements.price.value),
+            quilometragem: Number(elements.mileage.value),
+            status: elements.status.value
+        };
+    }
+
+    function filterParams() {
+        const params = new URLSearchParams();
+        if (elements.filterBrand.value) params.set("marcaId", elements.filterBrand.value);
+        if (elements.filterModel.value) params.set("modeloId", elements.filterModel.value);
+        if (elements.filterYear.value) params.set("ano", elements.filterYear.value);
+        if (elements.filterPriceMin.value) params.set("precoMin", elements.filterPriceMin.value);
+        if (elements.filterPriceMax.value) params.set("precoMax", elements.filterPriceMax.value);
+        if (elements.filterStatus.value) params.set("status", elements.filterStatus.value);
+        return params.toString();
+    }
+
+    async function loadVehicles() {
+        const query = filterParams();
+        const vehicles = await request(`/veiculos${query ? `?${query}` : ""}`);
+        elements.list.innerHTML = vehicles.map(vehicle => `
+            <tr>
+                <td>${vehicle.modelo.marca.nome}</td>
+                <td>${vehicle.modelo.nome}</td>
+                <td>${vehicle.ano}</td>
+                <td>${vehicle.cor}</td>
+                <td>${money.format(vehicle.preco)}</td>
+                <td>${vehicle.quilometragem.toLocaleString("pt-BR")}</td>
+                <td>${vehicle.status}</td>
+                <td>
+                    <div class="actions">
+                        <button class="secondary" onclick="editVehicle(${vehicle.id})">Editar</button>
+                        <button class="danger" onclick="deleteVehicle(${vehicle.id})">Remover</button>
+                    </div>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+    async function editVehicle(id) {
+        const vehicle = await request(`/veiculos/${id}`);
+        elements.id.value = vehicle.id;
+        elements.brand.value = vehicle.modelo.marca.id;
+        await loadModels();
+        elements.model.value = vehicle.modelo.id;
+        elements.year.value = vehicle.ano;
+        elements.color.value = vehicle.cor;
+        elements.price.value = vehicle.preco;
+        elements.mileage.value = vehicle.quilometragem;
+        elements.status.value = vehicle.status;
+        elements.message.textContent = "Editando veiculo selecionado.";
+    }
+
+    async function deleteVehicle(id) {
+        if (!confirm("Remover este veiculo do estoque?")) {
+            return;
+        }
+
+        await request(`/veiculos/${id}`, { method: "DELETE" });
+        elements.message.textContent = "Veiculo removido.";
+        await loadVehicles();
+    }
+
+    function clearForm() {
+        elements.form.reset();
+        elements.id.value = "";
+        elements.message.textContent = "";
+    }
+
+    elements.form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const id = elements.id.value;
+        const method = id ? "PUT" : "POST";
+        const path = id ? `/veiculos/${id}` : "/veiculos";
+
+        try {
+            await request(path, { method, body: JSON.stringify(vehiclePayload()) });
+            elements.message.textContent = id ? "Veiculo atualizado." : "Veiculo cadastrado.";
+            clearForm();
+            await loadVehicles();
+        } catch (error) {
+            elements.message.textContent = error.message;
+        }
+    });
+
+    document.querySelector("#clear-form").addEventListener("click", clearForm);
+    document.querySelector("#apply-filters").addEventListener("click", loadVehicles);
+    document.querySelector("#clear-filters").addEventListener("click", async () => {
+        elements.filterBrand.value = "";
+        elements.filterYear.value = "";
+        elements.filterPriceMin.value = "";
+        elements.filterPriceMax.value = "";
+        elements.filterStatus.value = "";
+        await loadFilterModels();
+        await loadVehicles();
+    });
+
+    elements.brand.addEventListener("change", loadModels);
+    elements.filterBrand.addEventListener("change", loadFilterModels);
+
+    loadBrands().then(loadVehicles).catch(error => {
+        elements.message.textContent = error.message;
+    });
+</script>
+</body>
+</html>

@@ -1,5 +1,12 @@
 target/
+node_modules/
+apache-maven-*/
+CRUD-API/
+package.json
+package-lock.json
+server.js
+public/
+*.log
 .idea/
 .vscode/
 *.iml
-*.log
