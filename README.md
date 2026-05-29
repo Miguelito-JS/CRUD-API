@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# CRUD-API
-Cadastro de carros com API
-=======
 # Sistema CRUD de Estoque de Veiculos
 
 Projeto didatico orientado a objetos para gestao de estoque de veiculos, usando Java, Spring Boot, API REST e MySQL.
@@ -201,4 +197,3 @@ git push -u origin main
 ```
 
 Depois envie o link publico do repositorio.
->>>>>>> ad49c61 (primeiro commit)
